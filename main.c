@@ -22,14 +22,14 @@ void IR_Init(void){
     ADC14->CTL0 &= ~0x00000002;
     while(ADC14->CTL0&0x00010000){};
     ADC14->CTL0 = 0x04203310;
-    ADC14->CTL1 = 0x0000F030;
-    ADC14->MCTL[0] = ADC14_MCTLN_INCH_0; //0x00000185; // port 5.0
+    ADC14->CTL1 = 0x0000F030; // TODO verify this
+    ADC14->MCTL[0] = 0x00000185; // port 5.0
     ADC14->MCTL[1] = 0x00000184; // port 5.1
     ADC14->MCTL[2] = 0x00000183; // port 5.2
     ADC14->MCTL[3] = 0x00000181; // port 5.4
     ADC14->IER1 = ADC14->IER0 = 0;
-    P5->SEL0 |= 0x17; //p5.0, 5.2, 5.2, 5.4
-    P5->SEL1 |= 0x17; //p5.0, 5.2, 5.2, 5.4
+    P5->SEL0 |= 0x17; //p5.0, 5.1, 5.2, 5.4 // TODO: change 5.4
+    P5->SEL1 |= 0x17; //p5.0, 5.1, 5.2, 5.4
     ADC14->CTL0 |= 0x00000002;
 
 }
@@ -59,6 +59,7 @@ void main(void)
     uint16_t adcResult;
     float volts;
     char uartStr[50];
+    float resultsIR[4];
 
     lcdInit();
     lcdClear();
@@ -66,19 +67,25 @@ void main(void)
 
     while (1) {
 
-        for (memIndex = 0; memIndex<4;memIndex++){
+        for (memIndex=0; memIndex<4; memIndex++){
             while (ADC14->CTL0&0x00010000){}; // wait for ADC
             ADC14->CTL0 |= 0x00000001;        // start a conversion
-            while((ADC14->IFGR0) & (1 << memIndex)==0){};  // wait until buffer is ready
+            while((ADC14->IFGR0&0x00000017)==0){};  // wait until buffer is ready
             adcResult = ADC14->MEM[memIndex];        // return the converted value
             volts = res*adcResult;
-            // convert to Volts
-            if (memIndex==0){
-                printf("IR %d: %.2f\n ",memIndex, volts);
-            }
+            resultsIR[memIndex]=volts;
+            _delay_cycles(10000);
 
-            _delay_cycles(1000);
-         }
+        }
+
+        int i;
+        printf("\nResults: ");
+        for(i=0; i<4; i++) {
+            printf("%.2f ", resultsIR[i]);
+        }
+
+        _delay_cycles(1000000);
+    }
 
 //        // Convert volt float value to a string and display to LCD
 //        sprintf(uartStr, "%.2f ", volts, "\n");
@@ -89,6 +96,6 @@ void main(void)
 //        sendString(uartStr);
 //
 //        // _delay_cycles(1000000);delay for screen
-        _delay_cycles(1000000);
-    }
+
+
 }
