@@ -15,7 +15,6 @@ volatile uint16_t leftSensor;
 // ************ Function Prototypes ************
 void randInt();
 
-
 // ******************** MAIN *******************
 int main(void)
     {

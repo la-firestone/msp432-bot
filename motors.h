@@ -22,6 +22,9 @@
 #define IN3_PIN BIT7 //P3.7
 #define IN4_PIN BIT5 //P3.5
 
+#define MAX_TICKS   10000
+#define DRIVE_SPEED 6000
+#define TURN_SPEED 5000
 
 // Function prototypes
 void SysTick_Init();

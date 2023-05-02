@@ -1,8 +1,8 @@
 #include "motors.h"
 
 
-int max_ticks = 10000;
-int speed = 5000;
+//int max_ticks = 10000;
+//int speed = 5000;
 
 void SysTick_Init(void){
     SysTick->CTRL = 0;           // Disable SysTick during setup
@@ -49,7 +49,7 @@ void motorInit()
 void motorPWMInit()
 {
     // Set period
-    TIMER_A0->CCR[0] = max_ticks-1;
+    TIMER_A0->CCR[0] = MAX_TICKS-1;
 
     // Configure CCR1 and CCR2 for ENA and ENB
     TIMER_A0->CCTL[1] = TIMER_A_CCTLN_OUTMOD_7;
@@ -67,7 +67,7 @@ void setMotorSpeed(int motor, int speedParam)
 {
     // Clamp speed to 0-100 range
     if (speedParam < 0) speedParam = 0;
-    if (speedParam > max_ticks) speedParam = max_ticks;
+    if (speedParam > MAX_TICKS) speedParam = MAX_TICKS;
 
     // Set duty cycle
     if (motor == 1)
@@ -119,8 +119,8 @@ void stop(void){
 void goForward(void){
     setMotorDirection(1,1);
     setMotorDirection(2,1);
-    setMotorSpeed(1, speed);
-    setMotorSpeed(2, speed);
+    setMotorSpeed(1, DRIVE_SPEED);
+    setMotorSpeed(2, DRIVE_SPEED);
 }
 
 void goForwardDelay(int delay){
@@ -136,8 +136,8 @@ void goForwardDelay(int delay){
 void turnLeft(void){
     setMotorDirection(1,1);
     setMotorDirection(2,0);
-    setMotorSpeed(1, speed);
-    setMotorSpeed(2, speed);
+    setMotorSpeed(1, TURN_SPEED);
+    setMotorSpeed(2, TURN_SPEED);
 }
 
 void turnLeftDelay(int delay){
@@ -150,8 +150,8 @@ void turnLeftDelay(int delay){
 void turnRight(void){
     setMotorDirection(1,0);
     setMotorDirection(2,1);
-    setMotorSpeed(1, speed);
-    setMotorSpeed(2, speed);
+    setMotorSpeed(1, TURN_SPEED);
+    setMotorSpeed(2, TURN_SPEED);
 }
 
 void turnRightDelay(int delay){
@@ -163,8 +163,8 @@ void turnRightDelay(int delay){
 void goReverse(void){
     setMotorDirection(1,0);
     setMotorDirection(2,0);
-    setMotorSpeed(1, speed);
-    setMotorSpeed(2, speed);
+    setMotorSpeed(1, DRIVE_SPEED);
+    setMotorSpeed(2, DRIVE_SPEED);
 }
 
 void goReverseDelay(int delay){
