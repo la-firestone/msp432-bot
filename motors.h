@@ -24,14 +24,22 @@
 
 
 // Function prototypes
+void SysTick_Init();
+void SysTick_Wait(uint32_t delay);
+void delay1ms();
+void delayms(int ms);
 void setupGPIO();
 void setupPWM();
 void setMotorSpeed(int motor, int speed);
 void setMotorDirection(int motor, int direction);
 void stop();
 void goForward();
+void goForwardDelay(int delay);
 void turnLeft();
+void turnLeftDelay(int delay);
 void turnRight();
+void turnRightDelay(int delay);
 void goReverse();
+void goReverseDelay(int delay);
 
 #endif /* MOTORS_H_ */
