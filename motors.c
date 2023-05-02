@@ -35,7 +35,7 @@ void delayms(int ms){
         }
 }
 
-void setupGPIO()
+void motorInit()
 {
     P2->SEL0 |= (ENA_PIN | ENB_PIN);
     P2->SEL1 &= ~(ENA_PIN | ENB_PIN);
@@ -46,7 +46,7 @@ void setupGPIO()
 }
 
 
-void setupPWM()
+void motorPWMInit()
 {
     // Set period
     TIMER_A0->CCR[0] = max_ticks-1;
