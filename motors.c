@@ -116,48 +116,60 @@ void stop(void){
     setMotorSpeed(2, 0);
 }
 
-
-void goForward(int delay=0){
+void goForward(void){
     setMotorDirection(1,1);
     setMotorDirection(2,1);
     setMotorSpeed(1, speed);
     setMotorSpeed(2, speed);
-    if (delay>0){
-        delayms(delay);
-        stop();
-    }
 }
 
-void turnLeft(int delay=0){
+void goForwardDelay(int delay){
+//    setMotorDirection(1,1);
+//    setMotorDirection(2,1);
+//    setMotorSpeed(1, speed);
+//    setMotorSpeed(2, speed);
+    goForward();
+    delayms(delay);
+    stop();
+}
+
+void turnLeft(void){
     setMotorDirection(1,1);
     setMotorDirection(2,0);
     setMotorSpeed(1, speed);
     setMotorSpeed(2, speed);
-    if (delay>0){
-        delayms(delay);
-        stop();
-    }
 }
 
-void turnRight(int delay=0){
+void turnLeftDelay(int delay){
+//
+    turnLeft();
+    delayms(delay);
+    stop();
+}
+
+void turnRight(void){
     setMotorDirection(1,0);
     setMotorDirection(2,1);
     setMotorSpeed(1, speed);
     setMotorSpeed(2, speed);
-    if (delay>0){
-        delayms(delay);
-        stop();
-    }
 }
 
-void goReverse(int delay=0){
+void turnRightDelay(int delay){
+    turnRight();
+    delayms(delay);
+    stop();
+}
+
+void goReverse(void){
     setMotorDirection(1,0);
     setMotorDirection(2,0);
     setMotorSpeed(1, speed);
     setMotorSpeed(2, speed);
-    if (delay>0){
-        delayms(delay);
-        stop();
-    }
+}
+
+void goReverseDelay(int delay){
+    goReverse();
+    delayms(delay);
+    stop();
 }
 

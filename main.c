@@ -63,6 +63,15 @@ int main(void)
     setupGPIO();
     setupPWM();
 
+    goForwardDelay(1000);
+    delayms(1000);
+    goReverseDelay(1000);
+    delayms(1000);
+    turnLeftDelay(1000);
+    delayms(1000);
+    turnRightDelay(1000);
+    delayms(1000);
+
     int bit;
 
      while(1)
