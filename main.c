@@ -12,6 +12,7 @@ volatile uint16_t rightSensor;
 volatile uint16_t midSensor;
 volatile uint16_t leftSensor;
 
+
 int randBit(void){
     srand(time(NULL)); // seed the random number generator with current time
     int random_num = rand(); // generate a random integer number
@@ -19,10 +20,35 @@ int randBit(void){
     return random_bit;
 }
 
+void delay1s(void){
+    int i =0;
+        for (i=0;i<100;i++)
+        {
+            SysTick->LOAD = 30000-1;
+            SysTick->VAL = 0;
+            while ((SysTick->CTRL & 0x00010000) == 0){}
+        }
+}
+
 int main(void)
     {
     WDT_A->CTL = WDT_A_CTL_PW | // Stop watchdog timer
     WDT_A_CTL_HOLD;
+
+    // ######################################
+
+    P2->DIR |= 0x07;  // P2.0-_2.1 set as outputs 00000111 (pins 2.0, 2.1, 2.2, use | to set)
+    P2->OUT &= ~0x07; // &= 11111000, turns off all the LEDS at init
+
+    SysTick->CTRL = 0;           // Disable SysTick during setup
+    SysTick->LOAD = 0x00FFFFFF;  // Maximum reload value 2^24-1 ~16.77 MILLION
+    SysTick->VAL = 0;            // Any write to current value clears it
+    SysTick->CTRL = 0x00000005;  // Enable SysTick with core clock
+
+    P2->OUT |= BIT1;
+    delay1s();
+    P2->OUT &= ~BIT1;
+
 
     // Configure GPIO
     P5->SEL1 |= BIT0 | BIT1 | BIT2; // Enable A/D channel A0-A3
@@ -41,7 +67,6 @@ int main(void)
     ADC14->MCTL[1] = ADC14_MCTLN_INCH_4; // ref+=AVcc, channel = A4 5.1
     ADC14->MCTL[2] = ADC14_MCTLN_INCH_3 | ADC14_MCTLN_EOS; // ref+=AVcc, channel = A3 5.2
     //ADC14->MCTL[3] = ADC14_MCTLN_INCH_0| ADC14_MCTLN_EOS;// ref+=AVcc, channel = A1, end seq. 5.5
-
 
     //ADC14->IER0 = ADC14_IER0_IE3; // Enable ADC14IFG.3
     //SCB->SCR &= ~SCB_SCR_SLEEPONEXIT_Msk; // Wake up on exit from ISR
