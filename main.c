@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "lcdLib_432.h"
 #include "motors.h"
+#include "buzzer.h"
 #define Num_of_Results 8
 #define THRESH 2000
 volatile uint16_t rightSensor;
