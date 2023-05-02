@@ -44,6 +44,7 @@ int main(void)
 
     // Ensures SLEEPONEXIT takes effect immediately
      //__DSB();
+    SysTick_Init();
     lcdInit();
     lcdClear();
     motorInit();
