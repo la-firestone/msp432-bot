@@ -33,9 +33,9 @@ void setupPWM();
 void setMotorSpeed(int motor, int speed);
 void setMotorDirection(int motor, int direction);
 void stop();
-void goForward();
-void turnLeft();
-void turnRight();
-void goReverse();
+void goForward(int delay);
+void turnLeft(int delay);
+void turnRight(int delay);
+void goReverse(int delay);
 
 #endif /* MOTORS_H_ */

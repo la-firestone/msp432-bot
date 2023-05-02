@@ -6,7 +6,7 @@
 #include "lcdLib_432.h"
 #include "motors.h"
 #include "buzzer.h"
-#define Num_of_Results 8
+
 #define THRESH 2000
 volatile uint16_t rightSensor;
 volatile uint16_t midSensor;
@@ -34,7 +34,6 @@ int main(void)
     P2->OUT |= BIT1;
     delayms(1000);
     P2->OUT &= ~BIT1;
-
 
     // Configure GPIO
     P5->SEL1 |= BIT0 | BIT1 | BIT2; // Enable A/D channel A0-A3
