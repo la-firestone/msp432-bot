@@ -70,6 +70,7 @@ int main(void)
          //printf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
 
          if (rightSensor < THRESH){
+            lcdClear();
             lcdSetText("turn left",0,0);
             turnLeft();
             __delay_cycles(1000000);
@@ -79,6 +80,7 @@ int main(void)
 
 
          else if (leftSensor < THRESH){
+             lcdClear();
              lcdSetText("turn right",0,0);
              turnRight();
              __delay_cycles(1000000);
@@ -87,6 +89,7 @@ int main(void)
          }
 
          else if (midSensor < THRESH){
+             lcdClear();
              lcdSetText("backup",0,0);
              goReverse();
              __delay_cycles(2000000);
