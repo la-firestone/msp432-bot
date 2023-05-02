@@ -20,6 +20,13 @@ int randBit(void){
     return random_bit;
 }
 
+void SysTick_Init(void){
+    SysTick->CTRL = 0;           // Disable SysTick during setup
+    SysTick->LOAD = 0x00FFFFFF;  // Maximum reload value 2^24-1 ~16.77 MILLION
+    SysTick->VAL = 0;            // Any write to current value clears it
+    SysTick->CTRL = 0x00000005;  // Enable SysTick with core clock
+}
+
 void delay1s(void){
     int i =0;
         for (i=0;i<100;i++)
@@ -40,11 +47,7 @@ int main(void)
     P2->DIR |= 0x07;  // P2.0-_2.1 set as outputs 00000111 (pins 2.0, 2.1, 2.2, use | to set)
     P2->OUT &= ~0x07; // &= 11111000, turns off all the LEDS at init
 
-    SysTick->CTRL = 0;           // Disable SysTick during setup
-    SysTick->LOAD = 0x00FFFFFF;  // Maximum reload value 2^24-1 ~16.77 MILLION
-    SysTick->VAL = 0;            // Any write to current value clears it
-    SysTick->CTRL = 0x00000005;  // Enable SysTick with core clock
-
+    SysTick_Init();
     P2->OUT |= BIT1;
     delay1s();
     P2->OUT &= ~BIT1;
