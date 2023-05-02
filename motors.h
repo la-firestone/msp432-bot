@@ -28,6 +28,10 @@ void setupGPIO();
 void setupPWM();
 void setMotorSpeed(int motor, int speed);
 void setMotorDirection(int motor, int direction);
-void motorsOff();
+void stop();
+void goForward();
+void turnLeft();
+void turnRight();
+void goReverse();
 
 #endif /* MOTORS_H_ */

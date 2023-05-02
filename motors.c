@@ -2,6 +2,7 @@
 
 
 int max_ticks = 10000;
+int speed = 5000;
 
 void setupGPIO()
 {
@@ -31,20 +32,20 @@ void setupPWM()
 
 }
 
-void setMotorSpeed(int motor, int speed)
+void setMotorSpeed(int motor, int speedParam)
 {
     // Clamp speed to 0-100 range
-    if (speed < 0) speed = 0;
-    if (speed > max_ticks) speed = max_ticks;
+    if (speedParam < 0) speedParam = 0;
+    if (speedParam > max_ticks) speedParam = max_ticks;
 
     // Set duty cycle
     if (motor == 1)
     {
-        TIMER_A0->CCR[1] = speed;
+        TIMER_A0->CCR[1] = speedParam;
     }
     else if (motor == 2)
     {
-        TIMER_A0->CCR[2] = speed;
+        TIMER_A0->CCR[2] = speedParam;
     }
 }
 
@@ -79,9 +80,36 @@ void setMotorDirection(int motor, int direction)
     }
 }
 
-void motorsOff(void){
-
-    setMotorSpeed(1,0);
-    setMotorSpeed(2,0);
-
+void stop(void){
+    setMotorSpeed(1, 0);
+    setMotorSpeed(2, 0);
 }
+
+void goForward(void){
+    setMotorDirection(1,1);
+    setMotorDirection(2,1);
+    setMotorSpeed(1, speed);
+    setMotorSpeed(2, speed);
+}
+
+void turnLeft(void){
+    setMotorDirection(1,1);
+    setMotorDirection(2,0);
+    setMotorSpeed(1, speed);
+    setMotorSpeed(2, speed);
+}
+
+void turnRight(void){
+    setMotorDirection(1,0);
+    setMotorDirection(2,1);
+    setMotorSpeed(1, speed);
+    setMotorSpeed(2, speed);
+}
+
+void goReverse(void){
+    setMotorDirection(1,0);
+    setMotorDirection(2,0);
+    setMotorSpeed(1, speed);
+    setMotorSpeed(2, speed);
+}
+
