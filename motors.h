@@ -24,6 +24,10 @@
 
 
 // Function prototypes
+void SysTick_Init();
+void SysTick_Wait(uint32_t delay);
+void delay1ms();
+void delayms(int ms);
 void setupGPIO();
 void setupPWM();
 void setMotorSpeed(int motor, int speed);

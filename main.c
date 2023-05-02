@@ -20,23 +20,6 @@ int randBit(void){
     return random_bit;
 }
 
-void SysTick_Init(void){
-    SysTick->CTRL = 0;           // Disable SysTick during setup
-    SysTick->LOAD = 0x00FFFFFF;  // Maximum reload value 2^24-1 ~16.77 MILLION
-    SysTick->VAL = 0;            // Any write to current value clears it
-    SysTick->CTRL = 0x00000005;  // Enable SysTick with core clock
-}
-
-void delay1s(void){
-    int i =0;
-        for (i=0;i<100;i++)
-        {
-            SysTick->LOAD = 30000-1;
-            SysTick->VAL = 0;
-            while ((SysTick->CTRL & 0x00010000) == 0){}
-        }
-}
-
 int main(void)
     {
     WDT_A->CTL = WDT_A_CTL_PW | // Stop watchdog timer
@@ -49,7 +32,7 @@ int main(void)
 
     SysTick_Init();
     P2->OUT |= BIT1;
-    delay1s();
+    delayms(1000);
     P2->OUT &= ~BIT1;
 
 

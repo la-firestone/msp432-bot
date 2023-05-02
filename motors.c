@@ -4,6 +4,37 @@
 int max_ticks = 10000;
 int speed = 5000;
 
+void SysTick_Init(void){
+    SysTick->CTRL = 0;           // Disable SysTick during setup
+    SysTick->LOAD = 0x00FFFFFF;  // Maximum reload value 2^24-1 ~16.77 MILLION
+    SysTick->VAL = 0;            // Any write to current value clears it
+    SysTick->CTRL = 0x00000005;  // Enable SysTick with core clock
+}
+
+void SysTick_Wait(uint32_t delay)
+{
+    SysTick->LOAD = delay-1;
+    SysTick->VAL = 0;
+    while ((SysTick->CTRL & 0x00010000) == 0){}
+}
+
+void delay1ms(void)
+{
+    SysTick_Wait(3000); // wait 10 ms
+}
+
+
+void delayms(int ms){
+    int i;
+        for (i=0;i<ms;i++)
+        {
+//            SysTick->LOAD = 30000-1;
+//            SysTick->VAL = 0;
+//            while ((SysTick->CTRL & 0x00010000) == 0){}
+            delay1ms();
+        }
+}
+
 void setupGPIO()
 {
     P2->SEL0 |= (ENA_PIN | ENB_PIN);
