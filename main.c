@@ -6,11 +6,14 @@
 #include "lcdLib_432.h"
 #include "motors.h"
 #include "buzzer.h"
+#include "uart.h"
 
 #define THRESH 2000
+#define DRIVE_MODE 0
 volatile uint16_t rightSensor;
 volatile uint16_t midSensor;
 volatile uint16_t leftSensor;
+volatile char uartStr[50];
 
 // ************ Function Prototypes ************
 void randInt();
@@ -44,6 +47,7 @@ int main(void)
     // Ensures SLEEPONEXIT takes effect immediately
      //__DSB();
     SysTick_Init();
+    UARTInit();
     lcdInit();
     lcdClear();
     motorInit();
@@ -63,40 +67,43 @@ int main(void)
          //__sleep();
          //__no_operation(); // For debugger
          //__delay_cycles(200000);
-         //printf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
+         sprintf(uartStr,"ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
+         printf(uartStr);
+         sendString(uartStr);
 
-         if (rightSensor < THRESH){
-         lcdSetText("turn left",0,0);
-         turnLeftDelay(500);
-         delayms(500);
-         }
-
-
-         else if (leftSensor < THRESH){
-         lcdSetText("turn right",0,0);
-         turnRightDelay(500);
-         delayms(500);
-         }
-
-         else if (midSensor < THRESH){
-         lcdSetText("backup",0,0);
-         goReverseDelay(500);
-
-             bit = randBit();
-             if (bit==0){
-                turnLeftDelay(500);
+         if (DRIVE_MODE){
+             if (rightSensor < THRESH){
+             lcdSetText("turn left",0,0);
+             turnLeftDelay(500);
+             delayms(500);
              }
 
-             else{
-                 turnRightDelay(500);
+
+             else if (leftSensor < THRESH){
+             lcdSetText("turn right",0,0);
+             turnRightDelay(500);
+             delayms(500);
              }
-      }
 
-      else{
-         lcdClear();
-         goForward();
-      }
+             else if (midSensor < THRESH){
+             lcdSetText("backup",0,0);
+             goReverseDelay(500);
 
+                 bit = randBit();
+                 if (bit==0){
+                    turnLeftDelay(500);
+                 }
+
+                 else{
+                     turnRightDelay(500);
+                 }
+          }
+
+          else{
+             lcdClear();
+             goForward();
+          }
+       }
     }
 }
 

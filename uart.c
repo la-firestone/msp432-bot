@@ -23,4 +23,8 @@ void sendString(char *message) {
     }
 }
 
+void receiveData(void){
+
+}
+
 
