@@ -11,6 +11,7 @@
 volatile uint16_t rightSensor;
 volatile uint16_t midSensor;
 volatile uint16_t leftSensor;
+volatile int running;
 
 // ************ Function Prototypes ************
 void randInt();
@@ -19,6 +20,25 @@ void randInt();
 int main(void)
     {
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD; // stop watchdog timer
+
+    /* Switch S1 */
+    P1->DIR &= ~BIT1;  // Switch 1 at P1.1 set for input direction
+    P1->REN |= BIT1;   // Enable Input Resistor
+    P1->OUT |= BIT1;   // Set resistor to pull up
+
+    //INIT LEDS
+    P6->DIR |= BIT1;  // Switch 1 at P1.1 set for input direction
+    P6->OUT &= ~BIT1;   // Set resistor to pull up
+
+    // Interrupt Configuration
+    P1->IE |=    BIT4 | BIT1;     // enable BIT0 and BIT1 as interrupts
+    P1->IES &= ~(BIT4 | BIT1); // set BIT0 and BIT1 as rising edge, 0->1 or pull-down
+    P1->IFG &= ~(BIT4 | BIT1); // clear interrupt flag
+
+    // enable NVIC for Port 1
+    NVIC->ISER[1] = 1 << ((PORT1_IRQn)&31);
+
+    __enable_irq();
 
 
     // ******************** INIT ADC *******************
@@ -50,55 +70,66 @@ int main(void)
     motorPWMInit();
 
     int bit;
+    running=0;
 
      while(1)
-    {    // Start conversion-software trigger
-         //while (ADC14->CTL0&0x00010000){}; // wait for ADC
-         ADC14->CTL0 |= ADC14_CTL0_ENC | ADC14_CTL0_SC;
-         rightSensor = ADC14->MEM[0]; // Move A0 results, IFG is cleared
-         midSensor = ADC14->MEM[1]; // Move A1 results, IFG is cleared
-         leftSensor = ADC14->MEM[2]; // Move A2 results, IFG is cleared
-         //backSensor = ADC14->MEM[3]; // Move A3 results, IFG is cleared
+    {
 
-         //__sleep();
-         //__no_operation(); // For debugger
-         //__delay_cycles(200000);
-         //printf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
+         if (running==1){
 
-         if (rightSensor < THRESH){
-         lcdSetText("turn left",0,0);
-         turnLeftDelay(500);
-         delayms(500);
-         }
+             // Start conversion-software trigger
+             //while (ADC14->CTL0&0x00010000){}; // wait for ADC
+             ADC14->CTL0 |= ADC14_CTL0_ENC | ADC14_CTL0_SC;
+             rightSensor = ADC14->MEM[0]; // Move A0 results, IFG is cleared
+             midSensor = ADC14->MEM[1]; // Move A1 results, IFG is cleared
+             leftSensor = ADC14->MEM[2]; // Move A2 results, IFG is cleared
+             //backSensor = ADC14->MEM[3]; // Move A3 results, IFG is cleared
 
+             //__sleep();
+             //__no_operation(); // For debugger
+             //__delay_cycles(200000);
+             //printf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
+             lcdClear();
 
-         else if (leftSensor < THRESH){
-         lcdSetText("turn right",0,0);
-         turnRightDelay(500);
-         delayms(500);
-         }
+             if (rightSensor < THRESH){
+             lcdSetText("turn left",0,0);
+             turnLeftDelay(500);
+             delayms(500);
+             }
 
-         else if (midSensor < THRESH){
-         lcdSetText("backup",0,0);
-         goReverseDelay(500);
+             else if (leftSensor < THRESH){
+             lcdSetText("turn right",0,0);
+             turnRightDelay(500);
+             delayms(500);
+             }
 
-             bit = randBit();
-             if (bit==0){
-                turnLeftDelay(500);
+             else if (midSensor < THRESH){
+             lcdSetText("backup",0,0);
+             goReverseDelay(500);
+
+                 bit = randBit();
+                 if (bit==0){
+                    turnLeftDelay(500);
+                 }
+
+                 else{
+                     turnRightDelay(500);
+                 }
              }
 
              else{
-                 turnRightDelay(500);
+                 goForward();
              }
-      }
 
-      else{
-         lcdClear();
-         goForward();
-      }
+        } // close if running
 
-    }
-}
+         else {
+             stop();
+         }
+
+    } // close while loop
+
+} //close main
 
 int randBit(void){
     srand(time(NULL)); // seed the random number generator with current time
@@ -119,3 +150,33 @@ int randBit(void){
 //        //__no_operation(); // Set Breakpoint1 here
 //    }
 //}
+
+void PORT1_IRQHandler()
+{
+    int i;
+    uint8_t result = P1->IFG;
+
+
+    if(result & BIT1)   // check button 1
+    {
+
+        if (running==0){ // disables SysTick
+            running = 1;
+            P6->OUT |= BIT1;
+            lcdClear();
+            lcdSetText("Starting!",0,0);
+
+        }
+
+        else if (running==1) {
+           running = 0;
+           P6->OUT &= ~BIT1;
+           lcdClear();
+           lcdSetText("Zzz...",0,0);
+        }
+
+        P1->IFG &= ~(result);
+        delayms(500);
+
+    }
+}
