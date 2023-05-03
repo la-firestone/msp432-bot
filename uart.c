@@ -9,7 +9,7 @@ void UARTInit(void){
     EUSCI_A2->CTLW0 |= EUSCI_A_CTLW0_SWRST; // Reset eUSCI
     EUSCI_A2->CTLW0 = EUSCI_A_CTLW0_SWRST | // Keep eUSCI in reset
     EUSCI_A_CTLW0_SSEL__SMCLK; // Use SMCLK as the eUSCI clock source
-    EUSCI_A2->BRW = 19; // 3000000/16/9600
+    EUSCI_A2->BRW = 20; // 3000000/16/9600
     EUSCI_A2->MCTLW = (2 << EUSCI_A_MCTLW_BRF_OFS) | EUSCI_A_MCTLW_OS16;
     EUSCI_A2->CTLW0 &= ~EUSCI_A_CTLW0_SWRST; // Initialize eUSCI
     EUSCI_A2->IFG &= ~EUSCI_A_IFG_RXIFG; // Clear eUSCI RX interrupt flag
