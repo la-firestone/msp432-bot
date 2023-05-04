@@ -6,12 +6,14 @@
 #include "lcdLib_432.h"
 #include "motors.h"
 #include "buzzer.h"
+#include "uart.h"
 
 #define THRESH 2000
 volatile uint16_t rightSensor;
 volatile uint16_t midSensor;
 volatile uint16_t leftSensor;
 volatile int running;
+volatile char buffer[20];
 
 // ************ Function Prototypes ************
 void randInt();
@@ -68,6 +70,7 @@ int main(void)
     lcdClear();
     motorInit();
     motorPWMInit();
+    UARTInit();
 
     int bit;
     running=0;
@@ -85,10 +88,24 @@ int main(void)
              leftSensor = ADC14->MEM[2]; // Move A2 results, IFG is cleared
              //backSensor = ADC14->MEM[3]; // Move A3 results, IFG is cleared
 
+             // ********************* UART **********************
+
+             //snprintf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
+             //sprintf(buffer, sizeof(buffer),"%d", rightSensor);
+             snprintf(buffer, sizeof(buffer), "%d\n", rightSensor);
+             UARTsendString(buffer);
+             delayms(20);
+//             snprintf(buffer, sizeof(buffer),"%d", midSensor);
+//             UARTsendString(buffer);
+//             delayms(10);
+//             snprintf(buffer, sizeof(buffer),"%d", leftSensor);
+//             UARTsendString(buffer);
+//             delayms(10);
+
              //__sleep();
              //__no_operation(); // For debugger
              //__delay_cycles(200000);
-             //printf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
+
              lcdClear();
 
              if (rightSensor < THRESH){
