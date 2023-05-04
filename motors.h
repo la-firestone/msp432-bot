@@ -44,5 +44,6 @@ void turnRight();
 void turnRightDelay(int delay);
 void goReverse();
 void goReverseDelay(int delay);
+int getTimeElapsed();
 
 #endif /* MOTORS_H_ */
