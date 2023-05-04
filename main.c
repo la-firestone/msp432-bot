@@ -96,11 +96,11 @@ int main(void)
              //snprintf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
              //sprintf(buffer, sizeof(buffer),"%d", rightSensor);
 
-             if ( (timeNow%1000) >= 0 && (timeNow%1000) <= 100)
+             if ( (timeNow%1000) >= 0 && (timeNow%1000) <= 800)
              {
-             snprintf(buffer, sizeof(buffer), "%d\n", timeNow); //Fill buffer with string content
+             snprintf(buffer, sizeof(buffer), "%d %d\n",rightSensor, timeNow); //Fill buffer with string content
              UARTsendString(buffer);
-             delayms(50);
+             delayms(100);
              }
 
 
@@ -131,15 +131,15 @@ int main(void)
 
              else if (midSensor < THRESH){
              lcdSetText("backup",0,0);
-             goReverseDelay(500);
+             goReverseDelay(600);
 
                  bit = randBit(); // generate random 0 or 1
                  if (bit==0){
-                    turnLeftDelay(500);
+                    turnLeftDelay(600);
                  }
 
                  else{
-                     turnRightDelay(500);
+                     turnRightDelay(600);
                  }
              }
 
