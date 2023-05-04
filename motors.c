@@ -17,12 +17,12 @@ void SysTick_Wait(uint32_t delay)
     SysTick->LOAD = delay-1;
     SysTick->VAL = 0;
     while ((SysTick->CTRL & 0x00010000) == 0){}
+    time_elapsed_ms = time_elapsed_ms + delay/1000;
 }
 
 void delay1ms(void)
 {
     SysTick_Wait(3000); // wait 10 ms
-    time_elapsed_ms++;
 }
 
 
@@ -35,7 +35,7 @@ void delayms(int ms){
 //            while ((SysTick->CTRL & 0x00010000) == 0){}
             delay1ms();
         }
-        time_elapsed_ms = time_elapsed_ms + ms;
+       // time_elapsed_ms = time_elapsed_ms + ms;
 }
 
 
