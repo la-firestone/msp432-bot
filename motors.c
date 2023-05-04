@@ -1,5 +1,6 @@
 #include "motors.h"
 
+int time_elapsed_ms = 0;
 
 //int max_ticks = 10000;
 //int speed = 5000;
@@ -21,6 +22,7 @@ void SysTick_Wait(uint32_t delay)
 void delay1ms(void)
 {
     SysTick_Wait(3000); // wait 10 ms
+    time_elapsed_ms++;
 }
 
 
@@ -33,6 +35,13 @@ void delayms(int ms){
 //            while ((SysTick->CTRL & 0x00010000) == 0){}
             delay1ms();
         }
+        time_elapsed_ms = time_elapsed_ms + ms;
+}
+
+
+int getTimeElapsed()
+{
+    return time_elapsed_ms;
 }
 
 void motorInit()
