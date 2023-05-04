@@ -80,6 +80,7 @@ int main(void)
 
      while(1)
     {
+         delayms(1);
          timeNow = getTimeElapsed();
          if (running==1)
          {
@@ -96,9 +97,9 @@ int main(void)
              //snprintf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
              //sprintf(buffer, sizeof(buffer),"%d", rightSensor);
 
-             if ( (timeNow%1000) >= 0 && (timeNow%1000) <= 800)
+             if ( (timeNow%1000) >= 0 && (timeNow%1000) <= 100)
              {
-             snprintf(buffer, sizeof(buffer), "%d %d\n",rightSensor, timeNow); //Fill buffer with string content
+             snprintf(buffer, sizeof(buffer), "%d %d %d\n",rightSensor, midSensor, leftSensor); //Fill buffer with string content
              UARTsendString(buffer);
              delayms(100);
              }
