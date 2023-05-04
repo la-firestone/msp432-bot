@@ -80,7 +80,7 @@ int main(void)
 
      while(1)
     {
-
+         timeNow = getTimeElapsed();
          if (running==1)
          {
              // Start conversion-software trigger
@@ -95,10 +95,13 @@ int main(void)
 
              //snprintf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
              //sprintf(buffer, sizeof(buffer),"%d", rightSensor);
-             timeNow = getTimeElapsed();
+
+             if ( (timeNow%1000) >= 0 && (timeNow%1000) <= 100)
+             {
              snprintf(buffer, sizeof(buffer), "%d\n", timeNow); //Fill buffer with string content
              UARTsendString(buffer);
-             delayms(20);
+             delayms(50);
+             }
 
 
 //             snprintf(buffer, sizeof(buffer),"%d", midSensor);
