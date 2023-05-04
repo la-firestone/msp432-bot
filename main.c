@@ -29,18 +29,17 @@ int main(void)
     P1->OUT |= BIT1;   // Set resistor to pull up
 
     //INIT LEDS
-    P6->DIR |= BIT1;  // Switch 1 at P1.1 set for input direction
-    P6->OUT &= ~BIT1;   // Set resistor to pull up
+    P6->DIR |= BIT1;  // LED1 at P6.1 set for output direction
+    //P6->OUT &= ~BIT1; // Do we need this?
 
     // Interrupt Configuration
-    P1->IE |=    BIT1;     // enable BIT0 and BIT1 as interrupts
+    P1->IE |= BIT1;     // enable BIT0 and BIT1 as interrupts
     P1->IES &= ~( BIT1); // set BIT0 and BIT1 as rising edge, 0->1 or pull-down
     P1->IFG &= ~( BIT1); // clear interrupt flag
 
     // enable NVIC for Port 1
     NVIC->ISER[1] = 1 << ((PORT1_IRQn)&31);
 
-    __enable_irq();
 
 
     // ******************** INIT ADC *******************
@@ -75,6 +74,8 @@ int main(void)
     int bit;
     running=0;
 
+    __enable_irq();
+
      while(1)
     {
 
@@ -92,9 +93,10 @@ int main(void)
 
              //snprintf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
              //sprintf(buffer, sizeof(buffer),"%d", rightSensor);
-             snprintf(buffer, sizeof(buffer), "%d\n", rightSensor);
+             snprintf(buffer, sizeof(buffer), "%d\n", rightSensor); //Fill buffer with string content
              UARTsendString(buffer);
              delayms(20);
+
 //             snprintf(buffer, sizeof(buffer),"%d", midSensor);
 //             UARTsendString(buffer);
 //             delayms(10);
@@ -111,7 +113,7 @@ int main(void)
              if (rightSensor < THRESH){
              lcdSetText("turn left",0,0);
              turnLeftDelay(500);
-             delayms(500);
+             delayms(100);
              }
 
              else if (leftSensor < THRESH){
