@@ -14,6 +14,8 @@ volatile uint16_t midSensor;
 volatile uint16_t leftSensor;
 volatile int running;
 volatile char buffer[20];
+int timeNow = 0;
+
 
 // ************ Function Prototypes ************
 void randInt();
@@ -79,8 +81,8 @@ int main(void)
      while(1)
     {
 
-         if (running==1){
-
+         if (running==1)
+         {
              // Start conversion-software trigger
              //while (ADC14->CTL0&0x00010000){}; // wait for ADC
              ADC14->CTL0 |= ADC14_CTL0_ENC | ADC14_CTL0_SC;
@@ -93,9 +95,11 @@ int main(void)
 
              //snprintf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
              //sprintf(buffer, sizeof(buffer),"%d", rightSensor);
-             snprintf(buffer, sizeof(buffer), "%d\n", rightSensor); //Fill buffer with string content
+             timeNow = getTimeElapsed();
+             snprintf(buffer, sizeof(buffer), "%d\n", timeNow); //Fill buffer with string content
              UARTsendString(buffer);
              delayms(20);
+
 
 //             snprintf(buffer, sizeof(buffer),"%d", midSensor);
 //             UARTsendString(buffer);
@@ -112,14 +116,14 @@ int main(void)
 
              if (rightSensor < THRESH){
              lcdSetText("turn left",0,0);
-             turnLeftDelay(500);
-             delayms(100);
+             turnLeftDelay(100);
+             //delayms(100);
              }
 
              else if (leftSensor < THRESH){
              lcdSetText("turn right",0,0);
-             turnRightDelay(500);
-             delayms(500);
+             turnRightDelay(100);
+             //delayms(100);
              }
 
              else if (midSensor < THRESH){
@@ -184,7 +188,6 @@ void PORT1_IRQHandler()
             P6->OUT |= BIT1;
             lcdClear();
             lcdSetText("Starting!",0,0);
-
         }
 
         else if (running==1) {
@@ -195,7 +198,7 @@ void PORT1_IRQHandler()
         }
 
         P1->IFG &= ~(result);
-        delayms(500);
+        delayms(50); // for de-bouncing the button
 
     }
 }
