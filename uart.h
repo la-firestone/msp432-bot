@@ -10,7 +10,7 @@
 
 #include <msp.h>
 void UARTInit();
-void sendString(char *message);
+void UARTsendString(char *str);
 
 
 #endif /* UART_H_ */
