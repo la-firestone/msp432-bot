@@ -33,9 +33,9 @@ int main(void)
     P6->OUT &= ~BIT1;   // Set resistor to pull up
 
     // Interrupt Configuration
-    P1->IE |=    BIT4 | BIT1;     // enable BIT0 and BIT1 as interrupts
-    P1->IES &= ~(BIT4 | BIT1); // set BIT0 and BIT1 as rising edge, 0->1 or pull-down
-    P1->IFG &= ~(BIT4 | BIT1); // clear interrupt flag
+    P1->IE |=    BIT1;     // enable BIT0 and BIT1 as interrupts
+    P1->IES &= ~( BIT1); // set BIT0 and BIT1 as rising edge, 0->1 or pull-down
+    P1->IFG &= ~( BIT1); // clear interrupt flag
 
     // enable NVIC for Port 1
     NVIC->ISER[1] = 1 << ((PORT1_IRQn)&31);
@@ -124,7 +124,7 @@ int main(void)
              lcdSetText("backup",0,0);
              goReverseDelay(500);
 
-                 bit = randBit();
+                 bit = randBit(); // generate random 0 or 1
                  if (bit==0){
                     turnLeftDelay(500);
                  }
