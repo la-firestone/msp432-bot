@@ -26,8 +26,21 @@ int main(void)
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD; // stop watchdog timer
 
     buzzerInit();
-    playNote(500,2);
-    playNote(700,4);
+
+    //playNote(NOTE_D4, 200);
+    //playNote(NOTE_E4, 1000);
+    int i=0;
+    for (i =0;i<50;i++)
+    {
+        playNote(i+200, 5);
+    }
+    for (i =0;i<50;i++)
+    {
+        playNote(i+200, 5);
+    }
+
+
+
 
     /* Switch S1 */
     P1->DIR &= ~BIT1;  // Switch 1 at P1.1 set for input direction

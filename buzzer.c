@@ -6,7 +6,7 @@ void buzzerInit(void) {
     P2->SEL1 &= ~(BIT7);
 }
 
-void playNote(uint16_t frequency, int duration)
+void playNote(uint16_t frequency, int duration_ms)
 {
     //
     uint32_t period = 1000000 / frequency;  // Calculate the period in microseconds
@@ -16,7 +16,7 @@ void playNote(uint16_t frequency, int duration)
     int j = 0;
 
     //while(duration <= halfPeriod*)
-    for (j=0;j<duration*100000/halfPeriod;j++)
+    for (j=0;j<duration_ms*1000/halfPeriod;j++)
     {
         P2->OUT ^= BIT7;       // Toggle the buzzer pin
         for (i =0;i<halfPeriod;i++)
