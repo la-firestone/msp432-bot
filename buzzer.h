@@ -26,7 +26,7 @@
 
 // Function prototypes
 void buzzerInit();
-void playNote(int frequency);
-void mute();
+void playNote(uint16_t frequency, int duration);
+
 
 #endif /* BUZZER_H_ */
