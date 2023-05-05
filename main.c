@@ -25,6 +25,10 @@ int main(void)
     {
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD; // stop watchdog timer
 
+    buzzerInit();
+    playNote(500,2);
+    playNote(700,4);
+
     /* Switch S1 */
     P1->DIR &= ~BIT1;  // Switch 1 at P1.1 set for input direction
     P1->REN |= BIT1;   // Enable Input Resistor
@@ -72,7 +76,6 @@ int main(void)
     motorInit();
     motorPWMInit();
     UARTInit();
-
     int bit;
     running=0;
 
