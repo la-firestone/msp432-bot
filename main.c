@@ -187,7 +187,7 @@ void enter_low_power_mode(void) {
     // Configure low power mode 4 (LPM4)
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
     PCM->CTL0 = PCM_CTL0_KEY_VAL | PCM_CTL0_CPM_4;
-    __sleep();
+    //__sleep();
     //__no_operation(); // For debugger
 }
 // Function to exit low power mode
