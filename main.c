@@ -25,7 +25,7 @@ void exit_low_power_mode(void);
 // ******************** MAIN *******************
 int main(void)
     {
-    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD; // stop watchdog timer
+    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD; // stop watch-dog timer
 
     buzzerInit();
 
@@ -46,7 +46,6 @@ int main(void)
 
     //INIT LEDS
     P6->DIR |= BIT1;  // LED1 at P6.1 set for output direction
-    //P6->OUT &= ~BIT1; // Do we need this?
 
     // Interrupt Configuration
     P1->IE |= BIT1;     // enable BIT0 and BIT1 as interrupts
@@ -56,30 +55,20 @@ int main(void)
     // enable NVIC for Port 1
     NVIC->ISER[1] = 1 << ((PORT1_IRQn)&31);
 
-
-
     // ******************** INIT ADC *******************
 
     // Configure GPIO
     P5->SEL1 |= BIT0 | BIT1 | BIT2; // Enable A/D channel A0-A3
-    P5->SEL0 |= BIT0 | BIT1 | BIT2;
+    P5->SEL0 |= BIT0 | BIT1 | BIT2; // P5.0, P5.1, P5.2 for Infra-Red Sensors
 
-    // Enable global interrupt
-    //__enable_irq();
-    //NVIC->ISER[0] = 1 << ((ADC14_IRQn) & 31);// Enable ADC interrupt in NVIC module
 
     // Turn on ADC14, extend sampling time to avoid overflow of results
     ADC14->CTL0 = ADC14_CTL0_ON | ADC14_CTL0_MSC | ADC14_CTL0_SHT0_7 | ADC14_CTL0_SHP | ADC14_CTL0_CONSEQ_3;
     ADC14->MCTL[0] = ADC14_MCTLN_INCH_5; // ref+=AVcc, channel = A5 5.0
     ADC14->MCTL[1] = ADC14_MCTLN_INCH_4; // ref+=AVcc, channel = A4 5.1
     ADC14->MCTL[2] = ADC14_MCTLN_INCH_3 | ADC14_MCTLN_EOS; // ref+=AVcc, channel = A3 5.2
-    //ADC14->MCTL[3] = ADC14_MCTLN_INCH_0| ADC14_MCTLN_EOS;// ref+=AVcc, channel = A1, end seq. 5.5
 
-    //ADC14->IER0 = ADC14_IER0_IE3; // Enable ADC14IFG.3
-    //SCB->SCR &= ~SCB_SCR_SLEEPONEXIT_Msk; // Wake up on exit from ISR
 
-    // Ensures SLEEPONEXIT takes effect immediately
-     //__DSB();
     SysTick_Init();
     lcdInit();
     lcdClear();
@@ -93,61 +82,45 @@ int main(void)
 
      while(1)
     {
-         delayms(1);
-         timeNow = getTimeElapsed();
+         delayms(1); // necessary for time elapsed to update
+         timeNow = getTimeElapsed(); // get time now in milliseconds
+
          if (running==1)
          {
              // Start conversion-software trigger
-             //while (ADC14->CTL0&0x00010000){}; // wait for ADC
              ADC14->CTL0 |= ADC14_CTL0_ENC | ADC14_CTL0_SC;
              rightSensor = ADC14->MEM[0]; // Move A0 results, IFG is cleared
              midSensor = ADC14->MEM[1]; // Move A1 results, IFG is cleared
              leftSensor = ADC14->MEM[2]; // Move A2 results, IFG is cleared
-             //backSensor = ADC14->MEM[3]; // Move A3 results, IFG is cleared
 
              // ********************* UART **********************
 
-             //snprintf("ADC Values: %d : %d : %d\n", rightSensor, midSensor, leftSensor);
-             //sprintf(buffer, sizeof(buffer),"%d", rightSensor);
-
              if ( (timeNow%1000) >= 0 && (timeNow%1000) <= 100)
              {
-             snprintf(buffer, sizeof(buffer), "%d %d %d\n",rightSensor, midSensor, leftSensor); //Fill buffer with string content
-             UARTsendString(buffer);
-             delayms(100);
+                 snprintf(buffer, sizeof(buffer), "%d %d %d\n",rightSensor, midSensor, leftSensor); //Fill buffer with string content
+                 UARTsendString(buffer);
+                 delayms(100);
              }
 
-
-//             snprintf(buffer, sizeof(buffer),"%d", midSensor);
-//             UARTsendString(buffer);
-//             delayms(10);
-//             snprintf(buffer, sizeof(buffer),"%d", leftSensor);
-//             UARTsendString(buffer);
-//             delayms(10);
-
-             //__sleep();
-             //__no_operation(); // For debugger
-             //__delay_cycles(200000);
 
              lcdClear();
 
-             if (rightSensor < THRESH){
-             lcdSetText("turn left",0,0);
-             turnLeftDelay(100);
-             //delayms(100);
+                 if (rightSensor < THRESH){
+                     lcdSetText("turn left",0,0);
+                     turnLeftDelay(100);
+
              }
 
              else if (leftSensor < THRESH){
-             lcdSetText("turn right",0,0);
-             turnRightDelay(100);
-             //delayms(100);
+                 lcdSetText("turn right",0,0);
+                 turnRightDelay(100);
              }
 
              else if (midSensor < THRESH){
-             lcdSetText("backup",0,0);
-             goReverseDelay(600);
-
+                 lcdSetText("backup",0,0);
+                 goReverseDelay(600);
                  bit = randBit(); // generate random 0 or 1
+
                  if (bit==0){
                     turnLeftDelay(600);
                  }
@@ -178,22 +151,9 @@ int randBit(void){
     return random_bit;
 }
 
-// ADC14 interrupt service routine
-//void ADC14_IRQHandler(void)
-//{
-//    if (ADC14->IFGR0 & ADC14_IFGR0_IFG3)
-//    {
-//        rightSensor = ADC14->MEM[0]; // Move A0 results, IFG is cleared
-//        midSensor = ADC14->MEM[1]; // Move A1 results, IFG is cleared
-//        leftSensor = ADC14->MEM[2]; // Move A2 results, IFG is cleared
-//        backSensor = ADC14->MEM[3]; // Move A3 results, IFG is cleared
-//        //__no_operation(); // Set Breakpoint1 here
-//    }
-//}
 
 void PORT1_IRQHandler()
 {
-    int i;
     uint8_t result = P1->IFG;
 
 
@@ -227,7 +187,7 @@ void enter_low_power_mode(void) {
     // Configure low power mode 4 (LPM4)
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
     PCM->CTL0 = PCM_CTL0_KEY_VAL | PCM_CTL0_CPM_4;
-    //__sleep();
+    __sleep();
     //__no_operation(); // For debugger
 }
 // Function to exit low power mode
