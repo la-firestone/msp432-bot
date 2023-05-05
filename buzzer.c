@@ -1,7 +1,7 @@
 # include "buzzer.h"
 
 void buzzerInit(void) {
-    P2->DIR |= BIT7; // P2.7 set TA0.1
+    P2->DIR |= BIT7; // P2.7 set as GPIO Output
     P2->SEL0 &= ~(BIT7);
     P2->SEL1 &= ~(BIT7);
 }
@@ -16,7 +16,7 @@ void playNote(uint16_t frequency, int duration_ms)
     int j = 0;
 
     //while(duration <= halfPeriod*)
-    for (j=0;j<duration_ms*1000/halfPeriod;j++)
+    for (j=0;j<duration_ms*1000/period;j++)
     {
         P2->OUT ^= BIT7;       // Toggle the buzzer pin
         for (i =0;i<halfPeriod;i++)
@@ -25,5 +25,6 @@ void playNote(uint16_t frequency, int duration_ms)
         }
         i = 0;
     }
+    P2->OUT &= ~(BIT7);
 }
 
