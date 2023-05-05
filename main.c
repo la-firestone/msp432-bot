@@ -19,6 +19,8 @@ int timeNow = 0;
 
 // ************ Function Prototypes ************
 void randInt();
+void enter_low_power_mode(void);
+void exit_low_power_mode(void);
 
 // ******************** MAIN *******************
 int main(void)
@@ -27,6 +29,7 @@ int main(void)
 
     buzzerInit();
 
+    // Play sound to indicate start of program
     playNote(NOTE_C6, 200);
     playNote(NOTE_E6, 100);
     playNote(NOTE_G6, 100);
@@ -34,18 +37,6 @@ int main(void)
     playNote(NOTE_C6, 200);
     playNote(NOTE_E6, 100);
     playNote(NOTE_G6, 100);
-
-//    int i=0;
-//    for (i =0;i<50;i++)
-//    {
-//        playNote(i+200, 5);
-//    }
-//    for (i =0;i<50;i++)
-//    {
-//        playNote(i+200, 5);
-//    }
-
-
 
 
     /* Switch S1 */
@@ -214,6 +205,7 @@ void PORT1_IRQHandler()
             P6->OUT |= BIT1;
             lcdClear();
             lcdSetText("Starting!",0,0);
+            exit_low_power_mode();
         }
 
         else if (running==1) {
@@ -221,6 +213,7 @@ void PORT1_IRQHandler()
            P6->OUT &= ~BIT1;
            lcdClear();
            lcdSetText("Zzz...",0,0);
+           enter_low_power_mode();
         }
 
         P1->IFG &= ~(result);
@@ -228,3 +221,20 @@ void PORT1_IRQHandler()
 
     }
 }
+
+// Function to enter low power mode
+void enter_low_power_mode(void) {
+    // Configure low power mode 4 (LPM4)
+    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+    PCM->CTL0 = PCM_CTL0_KEY_VAL | PCM_CTL0_CPM_4;
+    //__sleep();
+    //__no_operation(); // For debugger
+}
+// Function to exit low power mode
+void exit_low_power_mode(void) {
+    // Exit low power mode 4 (LPM4)
+    PCM->CTL0 = PCM_CTL0_KEY_VAL | PCM_CTL0_CPM_0;
+    while (PCM->CTL1 & PCM_CTL1_PMR_BUSY);
+    SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
+}
+
