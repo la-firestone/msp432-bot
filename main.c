@@ -27,17 +27,23 @@ int main(void)
 
     buzzerInit();
 
-    //playNote(NOTE_D4, 200);
-    //playNote(NOTE_E4, 1000);
-    int i=0;
-    for (i =0;i<50;i++)
-    {
-        playNote(i+200, 5);
-    }
-    for (i =0;i<50;i++)
-    {
-        playNote(i+200, 5);
-    }
+    playNote(NOTE_C6, 200);
+    playNote(NOTE_E6, 100);
+    playNote(NOTE_G6, 100);
+
+    playNote(NOTE_C6, 200);
+    playNote(NOTE_E6, 100);
+    playNote(NOTE_G6, 100);
+
+//    int i=0;
+//    for (i =0;i<50;i++)
+//    {
+//        playNote(i+200, 5);
+//    }
+//    for (i =0;i<50;i++)
+//    {
+//        playNote(i+200, 5);
+//    }
 
 
 
