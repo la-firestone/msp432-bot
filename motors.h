@@ -22,14 +22,17 @@
 #define IN3_PIN BIT7 //P3.7
 #define IN4_PIN BIT5 //P3.5
 
+#define MAX_TICKS   10000
+#define DRIVE_SPEED 6000
+#define TURN_SPEED 5000
 
 // Function prototypes
 void SysTick_Init();
 void SysTick_Wait(uint32_t delay);
 void delay1ms();
 void delayms(int ms);
-void setupGPIO();
-void setupPWM();
+void motorInit();
+void motorPWMInit();
 void setMotorSpeed(int motor, int speed);
 void setMotorDirection(int motor, int direction);
 void stop();
@@ -41,5 +44,6 @@ void turnRight();
 void turnRightDelay(int delay);
 void goReverse();
 void goReverseDelay(int delay);
+int getTimeElapsed();
 
 #endif /* MOTORS_H_ */
